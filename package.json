@@ -1,5 +1,5 @@
 {
-  "name": "loan-platform-sandbox",
+  "name": "onchain-credit-dashboard",
   "private": true,
   "scripts": {
     "build": "turbo run build",
