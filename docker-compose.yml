@@ -1,0 +1,27 @@
+# Define the services (containers) that make up your application
+services:
+  # The Backend Service
+  backend:
+    # Tell Docker Compose to build this image from a Dockerfile
+    build:
+      # The context is the root of our monorepo
+      context: .
+      # Specify the location of the backend's Dockerfile
+      dockerfile: apps/backend/Dockerfile
+    # Map port 3001 on your computer to port 3001 inside the container
+    ports:
+      - "3001:3001"
+    # Name the container for easy identification
+    container_name: onchain-backend
+
+  # The Frontend Service
+  frontend:
+    # Tell Docker Compose to build this image from its Dockerfile
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    # Map port 3000 on your computer to port 3000 inside the container
+    ports:
+      - "3000:3000"
+    # Name the container
+    container_name: onchain-frontend
