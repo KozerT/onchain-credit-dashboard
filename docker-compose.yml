@@ -22,6 +22,9 @@ services:
     # Map port 3001 on your computer to port 3001 inside the container
     ports:
       - "3001:3001"
+    # Add environment variables for other services
+    environment:
+      - MONGO_URI=${MONGO_URI}
       # This tells the backend to wait for the hardhat service to be ready before starting
     depends_on:
       - hardhat
@@ -42,3 +45,6 @@ services:
       - backend
     # Name the container
     container_name: onchain-frontend
+
+volumes:
+  mongo-data:
