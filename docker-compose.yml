@@ -7,8 +7,6 @@ services:
       dockerfile: packages/hardhat/Dockerfile
     ports:
       - "8545:8545"
-    # This command tells Docker to run our new startup script
-    command: sh -c "cd packages/hardhat && ./entrypoint.sh"
     container_name: onchain-hardhat-node
 
   # The Backend Service
@@ -25,6 +23,10 @@ services:
     # Add environment variables for other services
     environment:
       - MONGO_URI=${MONGO_URI}
+      - HARDHAT_PROVIDER_URL=http://hardhat:8545
+      - HARDHAT_PRIVATE_KEYS=${HARDHAT_PRIVATE_KEYS}
+    volumes:
+      - ./packages/hardhat/contract-address.json:/app/contract-address.json
       # This tells the backend to wait for the hardhat service to be ready before starting
     depends_on:
       - hardhat
@@ -45,6 +47,3 @@ services:
       - backend
     # Name the container
     container_name: onchain-frontend
-
-volumes:
-  mongo-data:

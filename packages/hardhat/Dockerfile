@@ -7,11 +7,19 @@ WORKDIR /app
 # Enable Corepack to enforce the correct package manager version
 RUN corepack enable
 
-# Copy only the necessary package manager files first to leverage Docker's cache
+# Copy package.json files first for better Docker layer caching
 COPY package*.json ./
 COPY turbo.json ./
 
-# Install all dependencies for the entire monorepo
+# Copy workspace package.json files with specific paths
+COPY packages/eslint-config/package.json ./packages/eslint-config/
+COPY packages/typescript-config/package.json ./packages/typescript-config/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/hardhat/package.json ./packages/hardhat/
+COPY apps/backend/package.json ./apps/backend/
+COPY apps/frontend/package.json ./apps/frontend/
+
+# Install dependencies
 RUN npm install
 
 # Copy the rest of the monorepo source code
@@ -21,4 +29,4 @@ COPY . .
 EXPOSE 8545
 
 # The command to start the Hardhat node will be provided by docker-compose
-CMD ["npx", "--workspace=hardhat", "hardhat", "node", "--hostname", "0.0.0.0"]
+CMD ["sh", "./packages/hardhat/entrypoint.sh"]
