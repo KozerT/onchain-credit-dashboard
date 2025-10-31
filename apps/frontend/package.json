@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "types:generate": "openapi-typescript http://localhost:3001/api-docs.json -o lib/api-types.ts"
   },
   "dependencies": {
     "next": "14.2.15",
@@ -18,6 +19,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "openapi-typescript": "^7.10.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
