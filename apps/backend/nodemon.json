@@ -1,0 +1,12 @@
+{
+  "watch": ["."],
+  "ext": "js,json",
+  "ignore": ["node_modules", "*.test.js"],
+  "exec": "node index.js",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "legacyWatch": true,
+  "pollingInterval": 1000
+}
+

@@ -38,7 +38,7 @@ services:
     # Tell Docker Compose to build this image from its Dockerfile
     build:
       context: .
-      dockerfile: apps/frontend/Dockerfile
+      dockerfile: apps/frontend/Dockerfile.dev
     # Map port 3000 on your computer to port 3000 inside the container
     ports:
       - "3000:3000"
@@ -47,3 +47,15 @@ services:
       - backend
     # Name the container
     container_name: onchain-frontend
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - ./packages:/app/packages
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./turbo.json:/app/turbo.json
+      - /app/node_modules
+      - /app/apps/frontend/node_modules
+      - /app/packages/hardhat/node_modules
+      - /app/packages/eslint-config/node_modules
+      - /app/packages/typescript-config/node_modules
+      - /app/packages/ui/node_modules

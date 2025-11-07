@@ -14,7 +14,7 @@ const nextConfig = {
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
   generateBuildId: async () => {
-    return 'build-' + Date.now();
+    return "build-" + Date.now();
   },
 };
 

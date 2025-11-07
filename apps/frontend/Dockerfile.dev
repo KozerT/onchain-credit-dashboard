@@ -1,0 +1,23 @@
+FROM node:18
+
+WORKDIR /app
+
+RUN corepack enable
+
+# Copy ALL package.json files from the monorepo root and workspaces
+COPY package*.json ./
+COPY turbo.json ./
+COPY apps/frontend/package.json ./apps/frontend/
+COPY apps/backend/package.json ./apps/backend/
+COPY packages/hardhat/package.json ./packages/hardhat/
+COPY packages/eslint-config/package.json ./packages/eslint-config/
+COPY packages/typescript-config/package.json ./packages/typescript-config/
+COPY packages/ui/package.json ./packages/ui/
+
+# Install ALL dependencies (including devDependencies like 'turbo')
+RUN npm install
+
+EXPOSE 3000
+
+# The default command to run. This starts the dev server for 'frontend'
+CMD ["npm", "run", "dev", "--filter=frontend"]
