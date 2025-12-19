@@ -8,6 +8,8 @@ services:
     ports:
       - "8545:8545"
     container_name: onchain-hardhat-node
+    volumes:
+      - ./packages/hardhat:/app/packages/hardhat
 
   # The Backend Service
   backend:
@@ -26,6 +28,7 @@ services:
       - HARDHAT_PROVIDER_URL=http://hardhat:8545
       - HARDHAT_PRIVATE_KEYS=${HARDHAT_PRIVATE_KEYS}
     volumes:
+      - ./apps/backend:/app/apps/backend
       - ./packages/hardhat/contract-address.json:/app/contract-address.json
       # This tells the backend to wait for the hardhat service to be ready before starting
     depends_on:
@@ -49,6 +52,7 @@ services:
     container_name: onchain-frontend
     volumes:
       - ./apps/frontend:/app/apps/frontend
+      - ./apps/backend:/app/apps/backend
       - ./packages:/app/packages
       - ./package.json:/app/package.json
       - ./package-lock.json:/app/package-lock.json

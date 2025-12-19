@@ -49,7 +49,7 @@ COPY --from=builder /app/apps/frontend/.next/static ./apps/frontend/.next/static
 EXPOSE 3000
 
 # Set an environment variable to disable Next.js telemetry
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # The command to start the production server
-CMD ["node", "apps/frontend/server.js"]
+CMD ["npx", "turbo", "run", "dev", "--filter=frontend", "--only"]

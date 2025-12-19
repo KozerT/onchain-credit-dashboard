@@ -1,4 +1,6 @@
-FROM node:18
+FROM node:18-alpine
+
+RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
@@ -20,4 +22,4 @@ RUN npm install
 EXPOSE 3000
 
 # The default command to run. This starts the dev server for 'frontend'
-CMD ["npm", "run", "dev", "--filter=frontend"]
+CMD ["npm", "run", "dev", "--prefix", "apps/frontend"]
