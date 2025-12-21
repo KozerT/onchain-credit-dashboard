@@ -2,6 +2,7 @@
 const nextConfig = {
   /* config options here */
   output: "standalone",
+  transpilePackages: ["@repo/ui"],
   eslint: {
     // Disable ESLint during builds in Docker to avoid configuration issues
     ignoreDuringBuilds: true,
