@@ -1,6 +1,23 @@
+import { InstitutionCard } from "@/components/InstitutionCard";
+import { components } from "@/lib/api-types";
 import { Button } from "@repo/ui/button";
 
-export const Institutions = () => {
+async function getInstitutions() {
+  const res = await fetch("http://localhost:3001/api/institutions", {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch institutions");
+  }
+
+  const data: components["schemas"]["Institution"][] = await res.json();
+  return data;
+}
+
+export const InstitutionsPage = async () => {
+  const institutions = await getInstitutions();
+
   return (
     <div className="space-y-8">
       <div>
@@ -16,7 +33,9 @@ export const Institutions = () => {
           <div>Filter Component will be here</div>
           {/* Institution Grid  */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            Institution Grid
+            {institutions.map((inst) => (
+              <InstitutionCard key={inst._id} data={inst} />
+            ))}
           </div>
           <Button>Load More</Button>
         </div>

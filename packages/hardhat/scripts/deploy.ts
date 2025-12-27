@@ -1,8 +1,9 @@
 import fs from "fs";
-import { ethers } from "hardhat";
+import hre from "hardhat";
 import path from "path";
 
 async function main() {
+  const { ethers } = hre as any;
   // Get the contract factory and the deployer's address (signer)
   const LoanContract = await ethers.getContractFactory("LoanData3475");
   const [deployer] = await ethers.getSigners();

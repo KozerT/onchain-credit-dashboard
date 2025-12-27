@@ -5,7 +5,7 @@ const nextConfig = {
   transpilePackages: ["@repo/ui"],
   eslint: {
     // Disable ESLint during builds in Docker to avoid configuration issues
-    ignoreDuringBuilds: true,
+    // ignoreDuringBuilds: true,
   },
   typescript: {
     // Disable TypeScript checking during builds in Docker to avoid configuration issues

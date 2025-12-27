@@ -3,6 +3,9 @@ import fs from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
+import dotenv from "dotenv";
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -12,7 +15,7 @@ const dockerPath = "/app/contract-address.json";
 
 const localPath = path.join(
   __dirname,
-  "../../../packages/contract/contract-address.json"
+  "../../../packages/hardhat/contract-address.json"
 );
 
 const contractInfoPath = fs.existsSync(dockerPath) ? dockerPath : localPath;

@@ -133,3 +133,55 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
 - [Configuration Options](https://turborepo.com/docs/reference/configuration)
 - [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+
+## To run a project outside of the docker (dev)
+
+### 1. Terminal Tab 1: The Blockchain Layer
+
+This simulates the Ethereum network on your laptop. Keep this running!
+
+```
+cd packages/hardhat
+npx hardhat node
+```
+
+### 2. Terminal Tab 2: The Backend ⚙️
+
+This tab does two things: deploys your smart contract (so the backend can find it) and starts the API server.
+
+- Step A: Deploy the Contract (Run this once every time you restart Tab 1)
+
+```
+
+cd packages/hardhat
+npx hardhat run scripts/deploy.ts --network localhost
+```
+
+! _Wait for: Contract deployed to: 0x... and contract-address.json saved._
+
+- Step B: Start the Server
+
+```
+cd apps/backend
+npm run dev
+```
+
+! _Wait for: Server is running at http://localhost:3001 and MongoDB Connected._
+
+### 3. Terminal Tab 3: The Frontend 🖥️
+
+This starts your Next.js user interface.
+
+```
+cd apps/frontend
+npm run dev
+```
+
+! _Wait for: Ready in ..._
+
+#### Summary View
+
+- Open Browser: http://localhost:3000
+- API Docs: http://localhost:3001/api-docs
+
+⚠️ Troubleshooting Tip: If you ever restart Tab 1 (Hardhat Node), the "Chain ID" and history reset. You MUST run the Step A (Deploy) command in Tab 2 again, or your backend will crash saying "Contract not found".
