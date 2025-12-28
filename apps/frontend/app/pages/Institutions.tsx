@@ -1,4 +1,5 @@
 import { InstitutionCard } from "@/components/InstitutionCard";
+import { Search } from "@/components/Search";
 import { components } from "@/lib/api-types";
 import { Button } from "@repo/ui/button";
 
@@ -29,7 +30,7 @@ export const InstitutionsPage = async () => {
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           {" "}
-          <div>Search Component goes here</div>
+          <Search />
           <div>Filter Component will be here</div>
           {/* Institution Grid  */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
