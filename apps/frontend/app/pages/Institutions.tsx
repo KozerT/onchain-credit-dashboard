@@ -2,6 +2,7 @@ import { Filter } from "@/components/Filter";
 import { InstitutionCard } from "@/components/InstitutionCard";
 import { Search } from "@/components/Search";
 import { components } from "@/lib/api-types";
+import { transformInstitution } from "@/lib/transformers";
 
 async function getInstitutions() {
   const baseUrl = process.env.INTERNAL_API_URL || "http://localhost:3001";
@@ -57,7 +58,7 @@ export const InstitutionsPage = async (props: {
       {/* Institution Grid  */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {filterInstitutions.map((inst) => (
-          <InstitutionCard key={inst._id} data={inst} />
+          <InstitutionCard key={inst._id} data={transformInstitution(inst)} />
         ))}
       </div>
     </div>

@@ -1,29 +1,20 @@
 "use client";
-import { components } from "@/lib/api-types";
+import { InstitutionViewModel } from "@/lib/transformers";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Card, CardContent, CardFooter } from "@repo/ui/card";
+import { formatCurrency } from "@repo/ui/lib/utils";
 import { Building2, ShieldCheck, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-type InstitutionData = components["schemas"]["Institution"];
-
 export interface InstitutionProps {
-  data: InstitutionData;
+  data: InstitutionViewModel;
 }
 
 export const InstitutionCard = ({ data }: InstitutionProps) => {
   const router = useRouter();
-  const formattedPortfolio = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "EUR",
-    notation: "compact",
-    maximumFractionDigits: 1,
-  }).format(data.totalPortfolio || 0);
 
-  const status = (data.creditRiskScore || 0) > 80 ? "verified" : "active";
-  const mockYield = "8.5%";
-  const mockTotalLoans = Math.floor((data.totalPortfolio || 0) / 150000);
+  const formattedPortfolio = formatCurrency(data.totalPortfolio || 0);
 
   const statusColors = {
     active: "bg-blue-500/10 text-blue-700 hover:bg-blue-500/20",
@@ -33,7 +24,7 @@ export const InstitutionCard = ({ data }: InstitutionProps) => {
   return (
     <Card
       className="border-border hover:border-primary/50 transition-all cursor-pointer group"
-      onClick={() => router.push(`/institution/${data._id}`)} // 👈 Next.js Navigation
+      onClick={() => router.push(`/institution/${data._id}`)}
     >
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
@@ -50,17 +41,23 @@ export const InstitutionCard = ({ data }: InstitutionProps) => {
               </p>
             </div>
           </div>
+
           {/* Using the Derived Status */}
-          <Badge className={statusColors[status]} variant="secondary">
-            {status === "verified" && <ShieldCheck className="w-3 h-3 mr-1" />}
-            {status}
+          <Badge
+            className={statusColors[data.calculatedStatus]}
+            variant="secondary"
+          >
+            {data.calculatedStatus === "verified" && (
+              <ShieldCheck className="w-3 h-3 mr-1" />
+            )}
+            {data.calculatedStatus}
           </Badge>
         </div>
 
         <div className="grid grid-cols-3 gap-4 mt-6">
           <div>
             <p className="text-xs text-muted-foreground mb-1">Est. Loans</p>
-            <p className="text-lg font-semibold">{mockTotalLoans}</p>
+            <p className="text-lg font-semibold">{data.estimatedLoanCount}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground mb-1">Portfolio</p>
@@ -73,7 +70,7 @@ export const InstitutionCard = ({ data }: InstitutionProps) => {
             <div className="flex items-center gap-1">
               <TrendingUp className="h-4 w-4 text-green-500" />
               <p className="text-lg font-semibold text-green-500">
-                {mockYield}
+                {data.displayYield}
               </p>
             </div>
           </div>
