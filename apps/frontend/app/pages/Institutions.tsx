@@ -12,14 +12,11 @@ async function getInstitutions() {
   return res.json() as Promise<components["schemas"]["Institution"][]>;
 }
 
-export const InstitutionsPage = async ({
-  searchParams,
-}: {
-  searchParams?: {
-    query?: string;
-    type?: string;
-  };
+export const InstitutionsPage = async (props: {
+  searchParams: Promise<{ query?: string; type?: string }>;
 }) => {
+  const searchParams = await props.searchParams;
+
   const allInstitutions = await getInstitutions();
 
   const query = searchParams?.query?.toLowerCase() || "";
