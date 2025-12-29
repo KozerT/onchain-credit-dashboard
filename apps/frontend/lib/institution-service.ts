@@ -45,3 +45,27 @@ export async function getInstitutionLoans(id: string): Promise<LoanDTO[]> {
   if (!res.ok) return [];
   return res.json();
 }
+
+export async function getLoanDetails(
+  institutionId: string,
+  loanId: string
+): Promise<LoanDTO> {
+  const res = await fetch(
+    `${BASE_URL}/api/institutions/${institutionId}/loans`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) throw new Error("Failed to fetch loans");
+
+  const loans: LoanDTO[] = await res.json();
+
+  const loan = loans.find((l) => l._id === loanId || l.loanId === loanId);
+
+  if (!loan) {
+    throw new Error("Loan not found");
+  }
+
+  return loan;
+}
