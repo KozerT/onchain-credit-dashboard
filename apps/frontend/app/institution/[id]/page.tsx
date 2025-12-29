@@ -1,10 +1,10 @@
+import { KPICard } from "@/components/KPICard";
 import { LoansTable } from "@/components/LoansTable";
 import {
   getInstitutionDashboard,
   getInstitutionLoans,
 } from "@/lib/institution-service";
 import { Button } from "@repo/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/card";
 import { formatCurrency } from "@repo/ui/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -44,19 +44,13 @@ export default async function InstitutionPage({
 
         {/* KPI Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatsCard
+          <KPICard
             title="Total Value"
             value={formatCurrency(stats.totalValue || 0)}
           />
-          <StatsCard
-            title="Active Loans"
-            value={String(stats.totalLoans || 0)}
-          />
-          <StatsCard title="Avg Yield" value={`${stats.avgYield || 0}%`} />
-          <StatsCard
-            title="Default Rate"
-            value={`${stats.defaultRate || 0}%`}
-          />
+          <KPICard title="Active Loans" value={String(stats.totalLoans || 0)} />
+          <KPICard title="Avg Yield" value={`${stats.avgYield || 0}%`} />
+          <KPICard title="Default Rate" value={`${stats.defaultRate || 0}%`} />
         </div>
 
         {/* Loans Table Section */}
@@ -66,20 +60,5 @@ export default async function InstitutionPage({
         </div>
       </main>
     </div>
-  );
-}
-
-function StatsCard({ title, value }: { title: string; value: string }) {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-      </CardContent>
-    </Card>
   );
 }
