@@ -1,8 +1,6 @@
-import { components } from "@/lib/api-types";
+import { InstitutionDTO } from "@/lib/dtos";
 
-type RawInstitution = components["schemas"]["Institution"];
-
-export interface InstitutionViewModel extends RawInstitution {
+export interface InstitutionViewModel extends InstitutionDTO {
   // New fields added locally
   calculatedStatus: "verified" | "active" | "pending";
   displayYield: string;
@@ -11,7 +9,7 @@ export interface InstitutionViewModel extends RawInstitution {
 
 // 2. function to transform Raw -> Perfect
 export function transformInstitution(
-  data: RawInstitution
+  data: InstitutionDTO
 ): InstitutionViewModel {
   // Logic: Status based on Risk Score
   const score = data.creditRiskScore || 0;

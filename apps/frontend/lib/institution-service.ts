@@ -1,8 +1,14 @@
-import { components } from "@/lib/api-types";
-
-type Loan = components["schemas"]["Loan"];
+import { DashboardStatsDTO, InstitutionDTO, LoanDTO } from "@/lib/dtos";
 
 const BASE_URL = process.env.INTERNAL_API_URL || "http://localhost:3001";
+
+export async function getInstitutions(): Promise<InstitutionDTO[]> {
+  const res = await fetch(`${BASE_URL}/api/institutions`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch institutions");
+  return res.json();
+}
 
 export async function getInstitutionDashboard(
   id: string
@@ -31,7 +37,7 @@ export async function getInstitutionDashboard(
   }
 }
 
-export async function getInstitutionLoans(id: string): Promise<Loan[]> {
+export async function getInstitutionLoans(id: string): Promise<LoanDTO[]> {
   const res = await fetch(`${BASE_URL}/api/institutions/${id}/loans`, {
     cache: "no-store",
   });

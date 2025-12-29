@@ -1,42 +1,24 @@
 import { Filter } from "@/components/Filter";
 import { InstitutionCard } from "@/components/InstitutionCard";
 import { Search } from "@/components/Search";
-import { components } from "@/lib/api-types";
+import { getInstitutions } from "@/lib/institution-service";
 import { transformInstitution } from "@/lib/transformers";
-
-async function getInstitutions() {
-  const baseUrl = process.env.INTERNAL_API_URL || "http://localhost:3001";
-  const res = await fetch(`${baseUrl}/api/institutions`, {
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error("Failed to fetch");
-  return res.json() as Promise<components["schemas"]["Institution"][]>;
-}
+import { filterInstitutions } from "@/lib/utils";
 
 export const InstitutionsPage = async (props: {
   searchParams: Promise<{ query?: string; type?: string }>;
 }) => {
   const searchParams = await props.searchParams;
-
-  const allInstitutions = await getInstitutions();
-
   const query = searchParams?.query?.toLowerCase() || "";
   const typeFilter = searchParams?.type;
 
-  const filterInstitutions = allInstitutions.filter((inst) => {
-    // Search logic (Name or Country)
-    const matchesSearch =
-      inst.name.toLowerCase().includes(query) ||
-      inst.country.toLowerCase().includes(query);
+  const allInstitutions = await getInstitutions();
 
-    // Filter Logic (Strictly match the API Enum)
-    const matchesType =
-      typeFilter && typeFilter !== "all"
-        ? inst.productType === typeFilter
-        : true;
-
-    return matchesSearch && matchesType;
-  });
+  const filteredInstitutions = filterInstitutions(
+    allInstitutions,
+    query,
+    typeFilter
+  );
 
   return (
     <div className="space-y-8">
@@ -57,7 +39,7 @@ export const InstitutionsPage = async (props: {
 
       {/* Institution Grid  */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filterInstitutions.map((inst) => (
+        {filteredInstitutions.map((inst) => (
           <InstitutionCard key={inst._id} data={transformInstitution(inst)} />
         ))}
       </div>
