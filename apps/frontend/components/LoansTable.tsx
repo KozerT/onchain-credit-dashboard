@@ -19,7 +19,13 @@ import { useMemo, useState } from "react";
 type Loan = components["schemas"]["Loan"];
 type SortField = "loanId" | "principalOpenEur" | "status";
 
-export const LoansTable = ({ loans }: { loans: Loan[] }) => {
+export const LoansTable = ({
+  loans,
+  institutionId,
+}: {
+  loans: Loan[];
+  institutionId: string;
+}) => {
   const router = useRouter();
   const [sortField, setSortField] = useState<SortField | null>(null);
   const [direction, setDirection] = useState<"asc" | "desc">("asc");
@@ -83,7 +89,11 @@ export const LoansTable = ({ loans }: { loans: Loan[] }) => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => router.push(`/loan/${loan.loanId}`)}
+                    onClick={() =>
+                      router.push(
+                        `/institution/${institutionId}/loan/${loan.loanId}`
+                      )
+                    }
                   >
                     Details
                   </Button>

@@ -9,12 +9,11 @@ import { formatCurrency } from "@repo/ui/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export default async function InstitutionPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
+export default async function InstitutionPage(props: {
+  params: Promise<{ "institution-id": string }>;
 }) {
-  const { id } = await params;
+  const params = await props.params;
+  const id = params["institution-id"];
 
   const [stats, loans] = await Promise.all([
     getInstitutionDashboard(id),
@@ -56,7 +55,7 @@ export default async function InstitutionPage({
         {/* Loans Table Section */}
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">Loan Portfolio</h2>
-          <LoansTable loans={loans} />
+          <LoansTable loans={loans} institutionId={id} />
         </div>
       </main>
     </div>

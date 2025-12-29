@@ -59,5 +59,3 @@ export function transformLoan(data: LoanDTO): LoanViewModel {
     ltv: 65 + (seed % 20), // 65-85%
   };
 }
-
-export * from "./transformers";
