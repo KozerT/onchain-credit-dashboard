@@ -69,3 +69,21 @@ export async function getLoanDetails(
 
   return loan;
 }
+
+export async function getInstitutionById(
+  id: string
+): Promise<InstitutionDTO | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/institutions/dashboard/${id}`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    return data.institution || null;
+  } catch (error) {
+    console.error("Failed to fetch institution:", error);
+    return null;
+  }
+}
