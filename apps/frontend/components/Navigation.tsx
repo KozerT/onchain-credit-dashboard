@@ -2,6 +2,7 @@
 
 import { BrandLogo } from "@/components/BrandLogo";
 import { NavList } from "@/components/NavList";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@repo/ui/button";
 import {
   Sheet,
@@ -24,8 +25,9 @@ export function Navigation({ children }: NavigationProps) {
     <div className="flex min-h-screen w-full bg-background">
       {/* ─── Desktop Sidebar ────────────────────────────────────────────── */}
       <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 border-r bg-card lg:block">
-        <div className="flex h-16 items-center border-b px-6">
+        <div className="flex h-16 items-center justify-between border-b px-6">
           <BrandLogo />
+          <ThemeToggle />
         </div>
         <div className="p-4">
           <NavList />
@@ -35,29 +37,31 @@ export function Navigation({ children }: NavigationProps) {
       {/* ─── Mobile Header ──────────────────────────────────────────────── */}
       <header className="fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between border-b bg-background px-4 lg:hidden">
         <BrandLogo />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </SheetTrigger>
 
-        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </SheetTrigger>
+            <SheetContent side="left" className="w-64 p-0">
+              {/* Header Section inside Sheet */}
+              <SheetHeader className="h-16 justify-center border-b px-6 text-left">
+                <SheetTitle>
+                  <BrandLogo />
+                </SheetTitle>
+              </SheetHeader>
 
-          <SheetContent side="left" className="w-64 p-0">
-            {/* Header Section inside Sheet */}
-            <SheetHeader className="h-16 justify-center border-b px-6 text-left">
-              <SheetTitle>
-                <BrandLogo />
-              </SheetTitle>
-            </SheetHeader>
-
-            <div className="p-4">
-              {/* Mobile close menu on click */}
-              <NavList onLinkClick={() => setMobileMenuOpen(false)} />
-            </div>
-          </SheetContent>
-        </Sheet>
+              <div className="p-4">
+                {/* Mobile close menu on click */}
+                <NavList onLinkClick={() => setMobileMenuOpen(false)} />
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </header>
 
       {/* ─── Main Content Wrapper ───────────────────────────────────────── */}
