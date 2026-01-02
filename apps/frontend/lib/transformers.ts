@@ -15,6 +15,7 @@ export interface LoanViewModel extends LoanDTO {
   creditScore: number;
   contractAddress: string;
   ltv: number;
+  remainingAmount: number;
 }
 
 // 2. function to transform Raw -> Perfect
@@ -57,5 +58,6 @@ export function transformLoan(data: LoanDTO): LoanViewModel {
     creditScore: 650 + (seed % 200), // Random score between 650-850
     contractAddress: `0x${seed.toString(16).padEnd(40, "0")}`,
     ltv: 65 + (seed % 20), // 65-85%
+    remainingAmount: data.principalOpenEur - (data.investedAmount || 0),
   };
 }

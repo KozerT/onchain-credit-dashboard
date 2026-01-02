@@ -40,3 +40,17 @@ export function sortData<T, K extends keyof T>(
     return ((Number(aVal) || 0) - (Number(bVal) || 0)) * modifier;
   });
 }
+
+export const formatDate = (dateString?: string) => {
+  if (!dateString) return "N/A";
+  try {
+    return new Date(dateString).toISOString().split("T")[0];
+  } catch {
+    return "N/A";
+  }
+};
+
+export const truncateMiddle = (str: string, start = 6, end = 4) => {
+  if (!str || str.length <= start + end) return str;
+  return `${str.slice(0, start)}...${str.slice(-end)}`;
+};

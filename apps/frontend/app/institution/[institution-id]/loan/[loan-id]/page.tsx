@@ -1,3 +1,5 @@
+import { DetailRow } from "@/components/DetailRow";
+import { KPICard } from "@/components/KPICard";
 import { LoanInvestAction } from "@/components/LoanInvestAction";
 import { getInstitutionById, getLoanDetails } from "@/lib/institution-service";
 import { transformLoan } from "@/lib/transformers";
@@ -10,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/card";
-import { formatCurrency } from "@repo/ui/lib/utils";
+import { formatCurrency, formatDate, truncateMiddle } from "@repo/ui/lib/utils";
 import {
   ArrowLeft,
   Calendar,
@@ -25,7 +27,6 @@ export default async function LoanPage(props: {
   params: Promise<{ "institution-id": string; "loan-id": string }>;
 }) {
   const params = await props.params;
-
   const institutionId = params["institution-id"];
   const loanId = params["loan-id"];
 
@@ -33,63 +34,16 @@ export default async function LoanPage(props: {
     getLoanDetails(institutionId, loanId),
     getInstitutionById(institutionId),
   ]);
-
   const loan = transformLoan(rawLoan);
 
-  // Calculate remaining amount
-  const remainingAmount = loan.principalOpenEur - (loan.investedAmount || 0);
-
-  // Format dates (YYYY-MM-DD format)
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "N/A";
-    try {
-      const date = new Date(dateString);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    } catch {
-      return "N/A";
-    }
+  const statusStyles: Record<string, string> = {
+    ACTIVE: "bg-green-500/10 text-green-700 border-green-500/20",
+    EXPIRED: "bg-yellow-500/10 text-yellow-700 border-yellow-500/20",
+    PAID: "bg-blue-500/10 text-blue-700 border-blue-500/20",
   };
 
-  const issueDate = formatDate(loan.createdAt);
-  const maturityDate = formatDate(loan.loanLastDate);
+  const statusVariant = loan.status === "ACTIVE" ? "default" : "secondary";
 
-  // Map status to badge variant
-  const getStatusVariant = (status?: string) => {
-    switch (status) {
-      case "ACTIVE":
-        return "default";
-      case "EXPIRED":
-        return "secondary";
-      case "PAID":
-        return "outline";
-      default:
-        return "secondary";
-    }
-  };
-
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case "ACTIVE":
-        return "bg-green-500/10 text-green-700 border-green-500/20";
-      case "EXPIRED":
-        return "bg-yellow-500/10 text-yellow-700 border-yellow-500/20";
-      case "PAID":
-        return "bg-blue-500/10 text-blue-700 border-blue-500/20";
-      default:
-        return "";
-    }
-  };
-
-  // Truncate contract address
-  const truncateAddress = (address: string) => {
-    if (address.length <= 20) return address;
-    return `${address.slice(0, 10)}...${address.slice(-8)}`;
-  };
-
-  // Ethereum explorer URL
   const etherscanUrl = `https://etherscan.io/address/${loan.contractAddress}`;
 
   return (
@@ -107,8 +61,8 @@ export default async function LoanPage(props: {
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold">Loan {loan.loanId}</h1>
                 <Badge
-                  className={`${getStatusColor(loan.status)} capitalize`}
-                  variant={getStatusVariant(loan.status)}
+                  className={`${statusStyles[loan.status || "ACTIVE"]} capitalize`}
+                  variant={statusVariant}
                 >
                   {loan.status?.toLowerCase() || "active"}
                 </Badge>
@@ -121,66 +75,29 @@ export default async function LoanPage(props: {
           <LoanInvestAction
             loanId={loan.loanId}
             loanYield={loan.displayYield}
-            remainingAmount={remainingAmount}
+            remainingAmount={loan.remainingAmount}
           />
         </div>
       </div>
 
       {/* KPI Cards Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              $ Principal
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(loan.principalOpenEur)}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Annual Yield
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-500">
-              {loan.displayYield}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Term
-            </CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{loan.displayTerm}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              $ Remaining
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(remainingAmount)}
-            </div>
-          </CardContent>
-        </Card>
+        <KPICard
+          title="Principal"
+          value={formatCurrency(loan.principalOpenEur)}
+        />
+        <KPICard
+          title="Annual Yield"
+          value={loan.displayYield}
+          icon={TrendingUp}
+          trendStatus="positive"
+        />
+        <KPICard title="Term" value={loan.displayTerm} icon={Calendar} />
+        <KPICard
+          title="Remaining Amount"
+          value={formatCurrency(loan.remainingAmount)}
+          icon={DollarSign}
+        />
       </div>
 
       {/* Details Grid Section */}
@@ -191,28 +108,13 @@ export default async function LoanPage(props: {
             <CardTitle>Loan Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">
-                Collateral Type:
-              </span>
-              <span className="text-sm font-medium">{loan.collateral}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">
-                Credit Score:
-              </span>
-              <span className="text-sm font-medium">{loan.creditScore}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Issue Date:</span>
-              <span className="text-sm font-medium">{issueDate}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">
-                Maturity Date:
-              </span>
-              <span className="text-sm font-medium">{maturityDate}</span>
-            </div>
+            <DetailRow label="Collateral Type" value={loan.collateral} />
+            <DetailRow label="Credit Score" value={String(loan.creditScore)} />
+            <DetailRow label="Issue Date" value={formatDate(loan.createdAt)} />
+            <DetailRow
+              label="Maturity Date"
+              value={formatDate(loan.loanLastDate)}
+            />
           </CardContent>
         </Card>
 
@@ -224,7 +126,7 @@ export default async function LoanPage(props: {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-mono text-muted-foreground">
-                {truncateAddress(loan.contractAddress)}
+                {truncateMiddle(loan.contractAddress, 10, 8)}
               </span>
               <a
                 href={etherscanUrl}
