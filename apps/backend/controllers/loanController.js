@@ -1,36 +1,56 @@
 import Loan from "../models/Loan.js";
+import Transaction from "../models/Transaction.js";
 
-// @desc    Invest in a specific loan
-// @route   PATCH /api/loans/:loanId/invest
+// @desc    Get a single loan by database _id
+// @route   GET /api/loans/:id
+export const getLoanById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const loan = await Loan.findById(id);
+    if (!loan) {
+      return res.status(404).json({ message: "Loan not found." });
+    }
+    res.json(loan);
+  } catch (error) {
+    console.error("Error fetching loan:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// @desc    Invest in a specific loan (creates Transaction)
+// @route   POST /api/loans/:id/invest
 export const investInLoan = async (req, res) => {
   try {
-    const { amountToInvest } = req.body;
-    const { loanId } = req.params;
+    const { id } = req.params;
+    const { amount, investorId } = req.body;
 
-    if (typeof amountToInvest !== "number" || amountToInvest <= 0) {
-      return res.status(400).json({ message: "Invalid investment amount." });
+    if (!amount || amount <= 0 || !investorId) {
+      return res.status(400).json({ message: "Invalid input." });
     }
 
-    const loan = await Loan.findById(loanId);
-
+    const loan = await Loan.findById(id);
     if (!loan) {
       return res.status(404).json({ message: "Loan not found." });
     }
 
-    // Validation: Don't allow over-investment
-    if (loan.investedAmount + amountToInvest > loan.principalOpenEur) {
-      return res
-        .status(400)
-        .json({ message: "Investment exceeds the total loan amount." });
+    const remainingAmount = loan.principalOpenEur - loan.investedAmount;
+    if (amount > remainingAmount) {
+      return res.status(400).json({ message: "Not enough available to invest." });
     }
 
-    const updatedLoan = await Loan.findByIdAndUpdate(
-      loanId,
-      { $inc: { investedAmount: amountToInvest } },
-      { new: true }
-    );
+    // Create transaction record
+    const transaction = await Transaction.create({
+      loanId: loan._id,
+      investorId,
+      amount,
+      status: "completed"
+    });
 
-    res.json(updatedLoan);
+    // Increment investedAmount
+    loan.investedAmount += amount;
+    await loan.save();
+
+    res.json({ loan, transactionId: transaction._id });
   } catch (error) {
     console.error("Error investing in loan:", error);
     res.status(500).json({ message: "Server error" });

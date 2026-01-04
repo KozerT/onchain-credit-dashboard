@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getLoanById,
   investInLoan,
   updateExpiredLoans,
 } from "../controllers/loanController.js";
@@ -7,7 +8,8 @@ import {
 const router = express.Router();
 
 export const loanRoutes = (contract) => {
-  router.route("/:loanId/invest").patch(investInLoan);
+  router.route("/:id").get(getLoanById);
+  router.route("/:id/invest").post(investInLoan); // POST for invest
   router.route("/update-statuses").post(updateExpiredLoans(contract));
   return router;
 };

@@ -25,7 +25,7 @@ const loanSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["ACTIVE", "EXPIRED", "PAID"],
+      enum: ["ACTIVE", "EXPIRED", "PAID", "DEFAULTED"],
       default: "ACTIVE",
     },
     principalOpenEur: {
@@ -44,6 +44,27 @@ const loanSchema = new mongoose.Schema(
     },
     url: {
       type: String,
+    },
+    yield: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    term: {
+      type: Number, // months
+      required: true,
+    },
+    creditScore: {
+      type: Number,
+      required: true,
+    },
+    collateralType: {
+      type: String,
+      required: false,
+    },
+    contractAddress: {
+      type: String,
+      required: false,
     },
   },
   {
