@@ -131,48 +131,13 @@ export const getInstitutionLoans = async (req, res) => {
 
 // @desc    Get dashboard summary for an institution
 // @route   GET /api/dashboard/:institutionId
+import { getInstitutionStats } from "../services/institutionService.js";
+
 export const getDashboardSummary = async (req, res) => {
   try {
     const { institutionId } = req.params;
-
-    const summaryResult = await Loan.aggregate([
-      {
-        $match: {
-          institution:
-            mongoose.Types.ObjectId.createFromHexString(institutionId),
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          totalLoanAmount: { $sum: "$principalOpenEur" },
-          totalInvestedAmount: { $sum: "$investedAmount" },
-          numberOfLoans: { $sum: 1 },
-        },
-      },
-    ]);
-
-    const institutionProfile = await Institution.findById(institutionId);
-    if (!institutionProfile) {
-      return res.status(404).json({ message: "Institution not found" });
-    }
-    const summary = summaryResult[0] || {
-      totalLoanAmount: 0,
-      totalInvestedAmount: 0,
-      numberOfLoans: 0,
-    };
-
-    summary.investmentPercentage =
-      summary.totalLoanAmount > 0
-        ? (summary.totalInvestedAmount / summary.totalLoanAmount) * 100
-        : 0;
-
-    const dashboardData = {
-      institution: institutionProfile,
-      summary: summary,
-    };
-
-    res.json(dashboardData);
+    const stats = await getInstitutionStats(institutionId);
+    res.json(stats);
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
     res.status(500).json({ message: "Server error" });
