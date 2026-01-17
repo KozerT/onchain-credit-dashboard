@@ -57,22 +57,28 @@ export async function getInstitutionStats(institutionId) {
   };
 
   if (loans.length > 0) {
-    const all = loans[0].all[0] || {};
-    const active = loans[0].active[0] || {};
-    const defaulted = loans[0].defaulted[0] || {};
+    const allData = loans[0].all[0] || {};
+    const activeData = loans[0].active[0] || {};
+    const defaultedData = loans[0].defaulted[0] || {};
 
-    stats.totalPortfolio = all.totalPortfolio || 0;
-    stats.activeLoanCount = active.activeLoanCount || 0;
-    const totalActivePrincipal = active.totalActivePrincipal || 0;
-    stats.avgYield =
-      totalActivePrincipal > 0
-        ? (active.weightedYield || 0) / totalActivePrincipal
-        : 0;
+    const currentAUM = activeData.totalActivePrincipal || 0; // Active Assets Under Management
+    const weightedYieldSum = activeData.weightedYield || 0;
+    const historicalLoanCount = allData.loanCount || 0;
+    const defaultedCount = defaultedData.defaultedLoanCount || 0;
 
-    const totalLoans = all.loanCount || 0;
-    const defaultedLoanCount = defaulted.defaultedLoanCount || 0;
+    // UI "Total Portfolio" = Current Active Money (AUM)
+    stats.totalPortfolio = currentAUM;
+
+    // UI "Active Loans" = Count of currently active loans
+    stats.activeLoanCount = activeData.activeLoanCount || 0;
+
+    stats.avgYield = currentAUM > 0 ? weightedYieldSum / currentAUM : 0;
+
+    // UI "Default Rate
     stats.defaultRate =
-      totalLoans > 0 ? (defaultedLoanCount / totalLoans) * 100 : 0;
+      historicalLoanCount > 0
+        ? (defaultedCount / historicalLoanCount) * 100
+        : 0;
   }
 
   // Fetch institution for creditRiskScore and status logic
