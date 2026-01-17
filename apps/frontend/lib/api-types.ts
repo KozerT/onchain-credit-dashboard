@@ -205,7 +205,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/loans/{loanId}/invest": {
+    "/api/loans/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a single loan by ID */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description The loan MongoDB ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Loan details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Loan"];
+                    };
+                };
+                /** @description Loan not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/loans/{id}/invest": {
         parameters: {
             query?: never;
             header?: never;
@@ -214,25 +260,22 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
         /** Invest in a specific loan */
-        patch: {
+        post: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    /** @description The loan ID */
-                    loanId: string;
+                    /** @description The loan MongoDB ID */
+                    id: string;
                 };
                 cookie?: never;
             };
             requestBody?: {
                 content: {
                     "application/json": {
-                        amountToInvest?: number;
+                        amount: number;
+                        investorId: string;
                     };
                 };
             };
@@ -243,11 +286,18 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["Loan"];
+                        "application/json": {
+                            loan?: components["schemas"]["Loan"];
+                            transactionId?: string;
+                        };
                     };
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/loans/update-statuses": {
@@ -350,6 +400,18 @@ export interface components {
             loanLastDate?: string;
             /** @description URL reference from the CSV, typically for on-chain data */
             url?: string;
+            /** @description Annual yield percentage */
+            yield?: number;
+            /** @description Loan term in months */
+            term?: number;
+            /** @description Credit score of the borrower */
+            creditScore?: number;
+            /** @description Type of asset backing the loan */
+            collateralType?: string;
+            /** @description Address of the on-chain contract */
+            contractAddress?: string;
+            /** @description Loan to Value ratio */
+            ltv?: number;
             /**
              * Format: date-time
              * @description The date the record was created

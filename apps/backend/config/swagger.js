@@ -136,17 +136,43 @@ const swaggerOptions = {
           },
         },
       },
-      "/api/loans/{loanId}/invest": {
-        patch: {
+      "/api/loans/{id}": {
+        get: {
+          tags: ["Loans"],
+          summary: "Get a single loan by ID",
+          parameters: [
+            {
+              in: "path",
+              name: "id",
+              schema: { type: "string" },
+              required: true,
+              description: "The loan MongoDB ID",
+            },
+          ],
+          responses: {
+            200: {
+              description: "Loan details",
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/Loan" },
+                },
+              },
+            },
+            404: { description: "Loan not found" },
+          },
+        },
+      },
+      "/api/loans/{id}/invest": {
+        post: {
           tags: ["Loans"],
           summary: "Invest in a specific loan",
           parameters: [
             {
               in: "path",
-              name: "loanId",
+              name: "id",
               schema: { type: "string" },
               required: true,
-              description: "The loan ID",
+              description: "The loan MongoDB ID",
             },
           ],
           requestBody: {
@@ -154,8 +180,10 @@ const swaggerOptions = {
               "application/json": {
                 schema: {
                   type: "object",
+                  required: ["amount", "investorId"],
                   properties: {
-                    amountToInvest: { type: "number" },
+                    amount: { type: "number" },
+                    investorId: { type: "string" },
                   },
                 },
               },
@@ -166,7 +194,13 @@ const swaggerOptions = {
               description: "Successful investment",
               content: {
                 "application/json": {
-                  schema: { $ref: "#/components/schemas/Loan" },
+                  schema: {
+                    type: "object",
+                    properties: {
+                      loan: { $ref: "#/components/schemas/Loan" },
+                      transactionId: { type: "string" },
+                    },
+                  },
                 },
               },
             },
@@ -285,6 +319,30 @@ const swaggerOptions = {
               type: "string",
               description:
                 "URL reference from the CSV, typically for on-chain data",
+            },
+            yield: {
+              type: "number",
+              description: "Annual yield percentage",
+            },
+            term: {
+              type: "number",
+              description: "Loan term in months",
+            },
+            creditScore: {
+              type: "number",
+              description: "Credit score of the borrower",
+            },
+            collateralType: {
+              type: "string",
+              description: "Type of asset backing the loan",
+            },
+            contractAddress: {
+              type: "string",
+              description: "Address of the on-chain contract",
+            },
+            ltv: {
+              type: "number",
+              description: "Loan to Value ratio",
             },
             createdAt: {
               type: "string",
