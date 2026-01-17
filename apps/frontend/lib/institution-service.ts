@@ -19,21 +19,27 @@ export async function getInstitutionDashboard(
     });
 
     if (!res.ok) {
-      return { totalValue: 0, totalLoans: 0, avgYield: 0, defaultRate: 0 };
+      return {
+        totalPortfolio: 0,
+        activeLoanCount: 0,
+        avgYield: 0,
+        defaultRate: 0,
+        status: "PENDING",
+      };
     }
 
     const data = await res.json();
 
-    // Map the nested API response to flat DTO
-    return {
-      totalValue: data.summary?.totalLoanAmount || 0,
-      totalLoans: data.summary?.numberOfLoans || 0,
-      avgYield: 8.5, //  API doesn't return this yet, this is mock
-      defaultRate: 2.3, // API doesn't return this yet, this is mock
-    };
+    return data;
   } catch (error) {
     console.error("Failed to fetch dashboard:", error);
-    return { totalValue: 0, totalLoans: 0, avgYield: 8.5, defaultRate: 2.3 };
+    return {
+      totalPortfolio: 0,
+      activeLoanCount: 0,
+      avgYield: 0,
+      defaultRate: 0,
+      status: "PENDING",
+    };
   }
 }
 

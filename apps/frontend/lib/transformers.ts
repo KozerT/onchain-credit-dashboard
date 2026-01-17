@@ -1,4 +1,4 @@
-import { InstitutionDTO, LoanDTO } from "@/lib/dtos";
+import { DashboardStatsDTO, InstitutionDTO, LoanDTO } from "@/lib/dtos";
 
 export interface InstitutionViewModel extends InstitutionDTO {
   // New fields added locally
@@ -20,24 +20,15 @@ export interface LoanViewModel extends LoanDTO {
 
 // 2. function to transform Raw -> Perfect
 export function transformInstitution(
-  data: InstitutionDTO
+  data: InstitutionDTO & Partial<DashboardStatsDTO>
 ): InstitutionViewModel {
-  // Logic: Status based on Risk Score
-  const score = data.creditRiskScore || 0;
-  let status: "verified" | "active" | "pending" = "active";
-  if (score > 80) status = "verified";
-  if (score < 50) status = "pending";
-
-  // Logic: Estimate Loans (Mock logic centralized here)
-  const portfolio = data.totalPortfolio || 0;
-  const estimatedCount = portfolio > 0 ? Math.floor(portfolio / 150000) : 0;
-
   return {
     ...data,
-    //  computed fields
-    calculatedStatus: status,
-    displayYield: "8.5%", //FIX: hardcoded, should be  to find/fix later!
-    estimatedLoanCount: estimatedCount,
+    calculatedStatus:
+      (data.status?.toLowerCase() as "verified" | "active" | "pending") ||
+      "active",
+    displayYield: data.avgYield ? `${data.avgYield.toFixed(2)}%` : "0.00%",
+    estimatedLoanCount: data.activeLoanCount || 0,
   };
 }
 

@@ -1,11 +1,8 @@
 import { parse } from "csv-parse";
 import fs from "fs";
-import mongoose from "mongoose";
 import Institution from "../models/Institution.js";
 import Loan from "../models/Loan.js";
-
-//  The 'contract' object will be imported from index.js later
-// For now, we assume it will be available when these functions are called.
+import { getInstitutionStats } from "../services/institutionService.js";
 
 // @desc    Create a new institution
 // @route   POST /api/institutions
@@ -26,8 +23,16 @@ export const createInstitution = async (req, res) => {
 // @route   GET /api/institutions
 export const getAllInstitutions = async (_req, res) => {
   try {
-    const institutions = await Institution.find({});
-    res.json(institutions);
+    // Fetch raw institutions ( .lean() for faster, plain JS objects)
+    const institutions = await Institution.find({}).lean();
+    // Calculate stats for EVERY institution in parallel
+    const enrichedInstitutions = await Promise.all(
+      institutions.map(async (inst) => {
+        const stats = await getInstitutionStats(inst._id);
+        return { ...inst, ...stats };
+      })
+    );
+    res.json(enrichedInstitutions);
   } catch (error) {
     console.error("Error fetching institutions:", error);
     res.status(500).json({ message: "Server error" });
@@ -131,7 +136,6 @@ export const getInstitutionLoans = async (req, res) => {
 
 // @desc    Get dashboard summary for an institution
 // @route   GET /api/dashboard/:institutionId
-import { getInstitutionStats } from "../services/institutionService.js";
 
 export const getDashboardSummary = async (req, res) => {
   try {

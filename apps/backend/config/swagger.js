@@ -131,7 +131,16 @@ const swaggerOptions = {
             },
           ],
           responses: {
-            200: { description: "Dashboard summary data" },
+            200: {
+              description: "Dashboard summary data",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/DashboardStats",
+                  },
+                },
+              },
+            },
             404: { description: "Institution not found" },
           },
         },
@@ -219,6 +228,40 @@ const swaggerOptions = {
     },
     components: {
       schemas: {
+        DashboardStats: {
+          type: "object",
+          required: [
+            "totalPortfolio",
+            "activeLoanCount",
+            "avgYield",
+            "defaultRate",
+            "status",
+          ],
+          properties: {
+            totalPortfolio: {
+              type: "number",
+              description: "Total Active AUM",
+            },
+            activeLoanCount: {
+              type: "number",
+              description: "Count of active loans",
+            },
+            avgYield: {
+              type: "number",
+              description: "Weighted average yield",
+            },
+            defaultRate: {
+              type: "number",
+              description: "Percentage of defaulted loans",
+            },
+            status: {
+              type: "string",
+              enum: ["VERIFIED", "ACTIVE", "PENDING"],
+              description: "Calculated status based on risk score",
+            },
+          },
+        },
+
         Institution: {
           type: "object",
           required: ["name", "country", "foundingYear", "productType"],

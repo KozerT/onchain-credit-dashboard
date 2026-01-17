@@ -35,7 +35,9 @@ export const investInLoan = async (req, res) => {
 
     const remainingAmount = loan.principalOpenEur - loan.investedAmount;
     if (amount > remainingAmount) {
-      return res.status(400).json({ message: "Not enough available to invest." });
+      return res
+        .status(400)
+        .json({ message: "Not enough available to invest." });
     }
 
     // Create transaction record
@@ -43,7 +45,7 @@ export const investInLoan = async (req, res) => {
       loanId: loan._id,
       investorId,
       amount,
-      status: "completed"
+      status: "completed",
     });
 
     // Increment investedAmount

@@ -186,7 +186,23 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": {
+                            /** @description Total Active AUM */
+                            totalPortfolio: number;
+                            /** @description Count of active loans */
+                            activeLoanCount: number;
+                            /** @description Weighted average yield */
+                            avgYield: number;
+                            /** @description Percentage of defaulted loans */
+                            defaultRate: number;
+                            /**
+                             * @description Calculated status based on risk score
+                             * @enum {string}
+                             */
+                            status: "VERIFIED" | "ACTIVE" | "PENDING";
+                        };
+                    };
                 };
                 /** @description Institution not found */
                 404: {

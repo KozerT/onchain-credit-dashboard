@@ -45,11 +45,20 @@ export default async function InstitutionPage(props: {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <KPICard
             title="Total Value"
-            value={formatCurrency(stats.totalValue || 0)}
+            value={formatCurrency(stats.totalPortfolio || 0)}
           />
-          <KPICard title="Active Loans" value={String(stats.totalLoans || 0)} />
-          <KPICard title="Avg Yield" value={`${stats.avgYield || 0}%`} />
-          <KPICard title="Default Rate" value={`${stats.defaultRate || 0}%`} />
+          <KPICard
+            title="Active Loans"
+            value={String(stats.activeLoanCount || 0)}
+          />
+          <KPICard
+            title="Avg Yield"
+            value={`${(stats.avgYield || 0).toFixed(2)}%`}
+          />
+          <KPICard
+            title="Default Rate"
+            value={`${(stats.defaultRate || 0).toFixed(2)}%`}
+          />
         </div>
 
         {/* Loans Table Section */}
