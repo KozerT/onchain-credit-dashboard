@@ -12,8 +12,11 @@ export function filterInstitutions(
       inst.name.toLowerCase().includes(normalizedQuery) ||
       inst.country.toLowerCase().includes(normalizedQuery);
 
+    // Case-insensitive comparison for productType with null/undefined handling
     const matchesType =
-      type && type !== "all" ? inst.productType === type : true;
+      type && type !== "all"
+        ? inst.productType?.toLowerCase() === type.toLowerCase()
+        : true;
 
     return matchesSearch && matchesType;
   });

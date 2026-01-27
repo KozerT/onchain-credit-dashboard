@@ -14,6 +14,21 @@ export const InstitutionsPage = async (props: {
 
   const allInstitutions = await getInstitutions();
 
+  // Debug logging to verify data and filtering
+  if (process.env.NODE_ENV === "development") {
+    console.log("Filtering Debug:", {
+      urlType: typeFilter,
+      totalInstitutions: allInstitutions.length,
+      firstItem: allInstitutions[0]
+        ? {
+            _id: allInstitutions[0]._id,
+            name: allInstitutions[0].name,
+            productType: allInstitutions[0].productType,
+          }
+        : null,
+    });
+  }
+
   const filteredInstitutions = filterInstitutions(
     allInstitutions,
     query,

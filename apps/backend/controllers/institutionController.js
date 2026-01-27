@@ -40,6 +40,7 @@ export const getAllInstitutions = async (_req, res) => {
           name: inst.name,
           country: inst.country,
           foundingYear: inst.foundingYear,
+          productType: inst.productType,
           // Merge the calculated stats explicitly
           totalPortfolio: stats.totalPortfolio,
           activeLoanCount: stats.activeLoanCount,

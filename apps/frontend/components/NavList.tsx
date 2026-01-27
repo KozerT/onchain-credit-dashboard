@@ -1,13 +1,14 @@
 "use client";
 
 import { cn } from "@repo/ui/lib/utils";
-import { BarChart3, Building2, Shield } from "lucide-react";
+import { Building2, Shield } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
   { href: "/", label: "Institutions", icon: Building2 },
-  { href: "/portfolio", label: "Portfolio Manager", icon: BarChart3 },
+  // TODO: Uncomment when Portfolio Manager page is implemented
+  // { href: "/portfolio", label: "Portfolio Manager", icon: BarChart3 },
   { href: "/admin", label: "Admin", icon: Shield },
 ];
 
