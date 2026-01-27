@@ -34,7 +34,18 @@ export const getAllInstitutions = async (_req, res) => {
     const enrichedInstitutions = await Promise.all(
       institutions.map(async (inst) => {
         const stats = await getInstitutionStats(inst._id);
-        return { ...inst, ...stats };
+        // Explicitly select only safe, required fields to prevent data exposure
+        return {
+          _id: inst._id,
+          name: inst.name,
+          country: inst.country,
+          foundingYear: inst.foundingYear,
+          // Merge the calculated stats explicitly
+          totalPortfolio: stats.totalPortfolio,
+          activeLoanCount: stats.activeLoanCount,
+          avgYield: stats.avgYield,
+          status: stats.status,
+        };
       })
     );
     res.json(enrichedInstitutions);

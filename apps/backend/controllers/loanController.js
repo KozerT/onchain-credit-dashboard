@@ -17,7 +17,9 @@ export const getLoanById = async (req, res) => {
   }
 };
 
-// TODO: Auth Here
+// TODO: SECURITY - Add Authentication Middleware to verify session.
+// TODO: SECURITY - Verify req.body.investorId matches the authenticated user.
+// TODO: LOGIC - Check if investor has sufficient balance before processing.
 // @desc    Invest in a specific loan (creates Transaction)
 // @route   POST /api/loans/:id/invest
 export const investInLoan = async (req, res) => {
@@ -25,8 +27,19 @@ export const investInLoan = async (req, res) => {
     const { id } = req.params;
     const { amount, investorId } = req.body;
 
-    if (!amount || amount <= 0 || !investorId) {
-      return res.status(400).json({ message: "Invalid input." });
+    // Strict validation for investorId
+    if (!investorId || typeof investorId !== "string" || investorId.trim() === "") {
+      return res.status(400).json({ message: "Invalid investorId." });
+    }
+
+    // Strict validation for amount: must be a number, not NaN, finite, and > 0
+    if (
+      typeof amount !== "number" ||
+      isNaN(amount) ||
+      !isFinite(amount) ||
+      amount <= 0
+    ) {
+      return res.status(400).json({ message: "Invalid amount. Must be a positive number." });
     }
 
     const loan = await Loan.findById(id);
