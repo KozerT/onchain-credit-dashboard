@@ -17,6 +17,7 @@ export const getLoanById = async (req, res) => {
   }
 };
 
+// TODO: Auth Here
 // @desc    Invest in a specific loan (creates Transaction)
 // @route   POST /api/loans/:id/invest
 export const investInLoan = async (req, res) => {

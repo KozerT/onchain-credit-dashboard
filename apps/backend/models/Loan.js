@@ -69,7 +69,6 @@ const loanSchema = new mongoose.Schema(
     ltv: {
       type: Number,
       required: false,
-      default: 65,
     },
   },
   {

@@ -40,8 +40,5 @@ app.get("/", (_req, res) => {
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`[backend]: Server is running at http://localhost:${PORT}`);
-  console.log(
-    `[backend]: API Docs available at http://localhost:${PORT}/api-docs`
-  );
+  // Server started successfully
 });

@@ -4,6 +4,11 @@ import Institution from "../models/Institution.js";
 import Loan from "../models/Loan.js";
 import { getInstitutionStats } from "../services/institutionService.js";
 
+// Default values for CSV loan uploads
+const DEFAULT_LOAN_TYPE = "Business";
+const INITIAL_LOAN_STATUS = "ACTIVE";
+const INITIAL_INVESTED_AMOUNT = 0;
+
 // @desc    Create a new institution
 // @route   POST /api/institutions
 export const createInstitution = async (req, res) => {
@@ -94,11 +99,11 @@ export const uploadLoanCSV = (contract) => async (req, res) => {
           loanId: row.loanId,
           classId: Number(row.classId),
           nonceId: Number(row.nonceId),
-          loanType: "Business",
+          loanType: DEFAULT_LOAN_TYPE,
           principalOpenEur: Number(row.amount),
           url: row.url,
-          status: "ACTIVE",
-          investedAmount: 0,
+          status: INITIAL_LOAN_STATUS,
+          investedAmount: INITIAL_INVESTED_AMOUNT,
           loanDate: loanDate,
           loanLastDate: expirationDate,
         });

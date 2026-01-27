@@ -44,7 +44,9 @@ export default async function LoanPage(props: {
 
   const statusVariant = loan.status === "ACTIVE" ? "default" : "secondary";
 
-  const etherscanUrl = `https://etherscan.io/address/${loan.contractAddress}`;
+  const etherscanUrl = loan.contractAddress
+    ? `https://etherscan.io/address/${loan.contractAddress}`
+    : "#";
 
   return (
     <div className="min-h-screen bg-background p-6 lg:p-8">
@@ -92,7 +94,9 @@ export default async function LoanPage(props: {
           icon={TrendingUp}
           trendStatus="positive"
         />
-        <KPICard title="Term" value={loan.displayTerm} icon={Calendar} />
+        {loan.displayTerm && (
+          <KPICard title="Term" value={loan.displayTerm} icon={Calendar} />
+        )}
         <KPICard
           title="Remaining Amount"
           value={formatCurrency(loan.remainingAmount)}
@@ -108,7 +112,9 @@ export default async function LoanPage(props: {
             <CardTitle>Loan Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <DetailRow label="Collateral Type" value={loan.collateral} />
+            {loan.collateral && (
+              <DetailRow label="Collateral Type" value={loan.collateral} />
+            )}
             <DetailRow label="Credit Score" value={String(loan.creditScore)} />
             <DetailRow label="Issue Date" value={formatDate(loan.createdAt)} />
             <DetailRow
@@ -124,25 +130,35 @@ export default async function LoanPage(props: {
             <CardTitle>Blockchain Verification</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-mono text-muted-foreground">
-                {truncateMiddle(loan.contractAddress, 10, 8)}
-              </span>
-              <a
-                href={etherscanUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:text-primary/80"
-              >
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            </div>
-            <div className="flex items-center gap-2 rounded-lg bg-green-500/10 border border-green-500/20 p-3">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-              <span className="text-sm font-medium text-green-700">
-                Verified on Ethereum Mainnet
-              </span>
-            </div>
+            {loan.contractAddress ? (
+              <>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-mono text-muted-foreground">
+                    {truncateMiddle(loan.contractAddress, 10, 8)}
+                  </span>
+                  <a
+                    href={etherscanUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:text-primary/80"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+                <div className="flex items-center gap-2 rounded-lg bg-green-500/10 border border-green-500/20 p-3">
+                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <span className="text-sm font-medium text-green-700">
+                    Verified on Ethereum Mainnet
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-2 rounded-lg bg-muted border p-3">
+                <span className="text-sm font-medium text-muted-foreground">
+                  Contract address pending deployment
+                </span>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

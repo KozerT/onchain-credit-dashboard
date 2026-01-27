@@ -71,9 +71,5 @@ const abi = [
 
 const contract = new ethers.Contract(contractInfo.address, abi, wallet);
 
-contract.getAddress().then((address) => {
-  console.log(`[backend]: Ethers.js connected to contract at ${address}`);
-});
-
 // Export the contract instance and other details if needed elsewhere
 export { contract, contractInfo, provider };

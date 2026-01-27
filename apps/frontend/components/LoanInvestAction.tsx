@@ -29,7 +29,6 @@ export function LoanInvestAction({
 
   const handleInvest = () => {
     // TODO: Implement investment logic
-    console.log("Investing", investmentAmount, "in loan", loanId);
     setOpen(false);
     setInvestmentAmount("");
   };

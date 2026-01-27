@@ -7,14 +7,12 @@ export interface InstitutionViewModel extends InstitutionDTO {
   estimatedLoanCount: number;
 }
 
-export interface LoanViewModel extends LoanDTO {
-  // Mocked/Computed fields
+export interface LoanViewModel extends Omit<LoanDTO, 'contractAddress' | 'collateralType'> {
   displayYield: string;
-  displayTerm: string;
-  collateral: string;
+  displayTerm: string | null;
+  collateral: string | null;
   creditScore: number;
-  contractAddress: string;
-  ltv: number;
+  contractAddress: string | null;
   remainingAmount: number;
 }
 
@@ -36,11 +34,10 @@ export function transformLoan(data: LoanDTO): LoanViewModel {
   return {
     ...data,
     displayYield: data.yield ? `${data.yield.toFixed(1)}%` : "0.0%",
-    displayTerm: data.term ? `${data.term} months` : "N/A",
-    collateral: data.collateralType || "General Business Assets",
+    displayTerm: data.term ? `${data.term} months` : null,
+    collateral: data.collateralType || null,
     creditScore: data.creditScore || 0,
-    contractAddress: data.contractAddress || "Pending Deployment",
-    ltv: data.ltv || 65,
+    contractAddress: data.contractAddress || null,
     remainingAmount: data.principalOpenEur - (data.investedAmount || 0),
   };
 }
